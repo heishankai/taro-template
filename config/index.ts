@@ -8,12 +8,19 @@ export default defineConfig<'vite'>(async (merge, { command, mode }) => {
   const baseConfig: UserConfigExport<'vite'> = {
     projectName: 'taro-template',
     date: '2025-9-20',
-    designWidth: 750,
+    designWidth: (input) => {
+      // 配置 NutUI 375 尺寸
+      if (input?.file?.replace(/\\+/g, '/').indexOf('@nutui') > -1) {
+        return 375
+      }
+      // 全局使用 Taro 默认的 750 尺寸
+      return 750
+    },
     deviceRatio: {
       640: 2.34 / 2,
       750: 1,
-      375: 2,
-      828: 1.81 / 2
+      828: 1.81 / 2,
+      375: 2 / 1
     },
     sourceRoot: 'src',
     outputRoot: 'dist',
@@ -33,7 +40,7 @@ export default defineConfig<'vite'>(async (merge, { command, mode }) => {
         pxtransform: {
           enable: true,
           config: {
-
+            selectorBlackList: ['nut-'],
           }
         },
         cssModules: {
