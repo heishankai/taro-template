@@ -27,6 +27,7 @@ specifiers:
   '@vitejs/plugin-react': ^4.3.0
   babel-plugin-import: ^1.13.8
   babel-preset-taro: 4.0.9
+  dayjs: ^1.11.18
   eslint: ^8.57.0
   eslint-config-taro: 4.0.9
   eslint-plugin-react: ^7.34.1
@@ -59,6 +60,7 @@ dependencies:
   '@tarojs/runtime': 4.0.9
   '@tarojs/shared': 4.0.9
   '@tarojs/taro': 4.0.9_n4uveoirvi4xpnjvv2mo7uoghm
+  dayjs: 1.11.18
   react: 18.3.1
   react-dom: 18.3.1_react@18.3.1
 
@@ -4729,6 +4731,10 @@ packages:
     dependencies:
       image-size: 0.8.3
       mimer: 1.1.0
+    dev: false
+
+  /dayjs/1.11.18:
+    resolution: {integrity: sha512-zFBQ7WFRvVRhKcWoUh+ZA1g2HVgUbsZm9sbddh8EC5iv93sui8DVVz1Npvz+r6meo9VKfa8NyLWBsQK1VvIKPA==}
     dev: false
 
   /debug/3.1.0:
