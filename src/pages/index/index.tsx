@@ -1,28 +1,30 @@
-import { View, Text } from "@tarojs/components";
-import { useLoad } from "@tarojs/taro";
-import { Button, Cell, Space } from "@nutui/nutui-react-taro";
-import "./index.scss";
+import { View } from "@tarojs/components";
+import { useRef } from "react";
+import { Cell } from "@nutui/nutui-react-taro";
+import CustomPicker from "../../components/custom-picker";
 
 export default function Index() {
-  useLoad(() => {
-    console.log("Page loaded.");
-  });
+  const customPickerRef = useRef<any>(null);
 
   return (
     <View className="index">
-      <Text>Hello world!</Text>
-
-      {/* NutUI 组件示例 */}
-      <Space direction="vertical" style={{ margin: "20px" }}>
-        <Button type="primary">主要按钮</Button>
-        <Button type="success">成功按钮</Button>
-        <Button type="warning">警告按钮</Button>
-      </Space>
-      
-      <View style={{ margin: "20px" }}>
-        <Cell title="单元格标题">描述文字</Cell>
-        <Cell title="可点击" />
+      <View>
+        <Cell
+          title="可点击"
+          clickable
+          onClick={() => customPickerRef.current?.handleOpenPopup()}
+        />
       </View>
+      <CustomPicker
+        ref={customPickerRef}
+        onConfirm={(options) => {
+          console.log(options, "options");
+        }}
+        type="year-month"
+        // minDate="2025-09-13"
+        // maxDate="2025-09-14"
+        defaultDate="2025-09-14"
+      />
     </View>
   );
 }

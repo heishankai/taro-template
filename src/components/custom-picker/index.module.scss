@@ -1,0 +1,47 @@
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 22px max(22px, env(safe-area-inset-bottom), 22px);
+
+  .selected-text {
+    color: #303133;
+    font-weight: 500;
+    font-size: 32px;
+    letter-spacing: 0.57px;
+
+    height: 100%;           // 撑满 PickerViewColumn
+    display: flex;           // flex 居中
+    align-items: center;     // 垂直居中
+    justify-content: center; // 水平居中
+    line-height: normal;     // 避免 line-height 影响居中
+    text-align: center;
+  }
+}
+
+.popup-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px;
+  font-family: 'PingFang SC';
+
+  .popup-cancel,
+  .popup-confirm {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 48px;
+  }
+
+  .popup-confirm {
+    color: #ce1925;
+  }
+
+  .popup-cancel {
+    color: #909399;
+  }
+
+  .popup-text {
+    font-size: 36px;
+    font-weight: 500;
+  }
+}
