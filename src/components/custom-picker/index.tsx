@@ -4,6 +4,7 @@ import {
   ForwardRefRenderFunction,
   useState,
 } from "react";
+import { useBoolean } from "ahooks";
 import { View, PickerView, PickerViewColumn } from "@tarojs/components";
 import { Popup } from "@nutui/nutui-react-taro";
 import styles from "./index.module.scss";
@@ -29,7 +30,7 @@ const DynamicDatePicker: ForwardRefRenderFunction<
   DynamicDatePickerProps
 > = (props, ref) => {
   const type = props?.type || "date";
-  const [visible, setVisible] = useState(false);
+  const [visible, { setTrue, setFalse }] = useBoolean(false);
   const [years, setYears] = useState<number[]>([]);
   const [months, setMonths] = useState<number[]>([]);
   const [days, setDays] = useState<number[]>([]);
@@ -38,7 +39,7 @@ const DynamicDatePicker: ForwardRefRenderFunction<
   console.log(props, "propspropsprops");
 
   const handleOpenPopup = () => {
-    setVisible(true);
+    setTrue();
     const { yearList, monthList, dayList, yearIdx, monthIdx, dayIdx } =
       dateLimit(props, type);
 
@@ -64,7 +65,7 @@ const DynamicDatePicker: ForwardRefRenderFunction<
       props?.onConfirm?.([years[yIdx], months[mIdx], days[dIdx]]);
     }
 
-    setVisible(false);
+    setFalse();
   };
 
   const handleChange = (e: any) => {
@@ -91,15 +92,22 @@ const DynamicDatePicker: ForwardRefRenderFunction<
       round={false}
       className={styles["popup-content"]}
       style={{ height: "46%" }}
-      onOverlayClick={() => setVisible(false)}
+      onOverlayClick={() => setFalse()}
       destroyOnClose
     >
-      <PopupTitle setFalse={() => setVisible(false)} onConfirm={onConfirm} />
+      <PopupTitle setFalse={setFalse} onConfirm={onConfirm} />
 
-      <PickerView value={selected} onChange={handleChange} style={{ flex: 1 }}>
+      <PickerView
+        value={selected}
+        onChange={handleChange}
+        style={{ flex: 1 }}
+        indicatorStyle="height: 60px"
+      >
         {/* 年 */}
         <PickerViewColumn>
           {years.map((y) => {
+            console.log(y, "y");
+
             return (
               <View key={y} className={styles["selected-text"]}>
                 {y}年
