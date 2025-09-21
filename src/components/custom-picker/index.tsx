@@ -101,7 +101,6 @@ const DynamicDatePicker: ForwardRefRenderFunction<
         value={selected}
         onChange={handleChange}
         style={{ flex: 1 }}
-        indicatorStyle="height: 60px"
       >
         {/* 年 */}
         <PickerViewColumn>
