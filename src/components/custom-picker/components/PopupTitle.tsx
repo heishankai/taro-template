@@ -1,4 +1,4 @@
-import { FunctionComponent, memo } from "react";
+import { FunctionComponent } from "react";
 import { View } from "@tarojs/components";
 import styles from "../index.module.scss";
 
@@ -13,8 +13,6 @@ const PopupTitle: FunctionComponent<PopupTitleProps> = ({
   onConfirm,
   title,
 }) => {
-  console.log("title", title);
-
   return (
     <View className={styles["popup-title"]}>
       <View onClick={() => setFalse()} className={styles["popup-cancel"]}>
@@ -28,4 +26,4 @@ const PopupTitle: FunctionComponent<PopupTitleProps> = ({
   );
 };
 
-export default memo(PopupTitle);
+export default PopupTitle;

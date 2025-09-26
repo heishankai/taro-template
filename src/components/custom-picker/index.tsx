@@ -8,43 +8,27 @@ import {
 import { useBoolean } from "ahooks";
 import { View, PickerView, PickerViewColumn } from "@tarojs/components";
 import { Popup } from "@nutui/nutui-react-taro";
-import type { PopupProps } from "@nutui/nutui-react-taro";
 import styles from "./index.module.scss";
+import type { DynamicDatePickerProps, CustomPickerRef } from "./types";
+// constants
+import { TYPE_DATE, TYPE_YEAR_MONTH, DEFAULT_TITLE } from "./constants";
 // utils
 import { dateLimit, scrollLimit } from "./utils";
 // components
 import PopupTitle from "./components/PopupTitle";
-
-const TYPEDATE = "date"; // YYYY-MM-DD
-const TYPEYEARMONTH = "year-month"; // YYYY-MM
-
-interface DynamicDatePickerProps {
-  type?: typeof TYPEDATE | typeof TYPEYEARMONTH; // 选择类型，默认 date
-  defaultDate?: string; // 默认日期
-  minDate?: string; // 限制最小日期
-  maxDate?: string; // 限制最大日期
-  title?: string; // 弹窗标题
-  onConfirm: (options: number[]) => void; // 确认选择回调
-  popupProps?: PopupProps; // 支持对 popup 的自定义
-}
-
-export interface CustomPickerRef {
-  handleOpenPopup: () => void;
-  onConfirm: () => void;
-}
 
 const DynamicDatePicker: ForwardRefRenderFunction<
   CustomPickerRef,
   DynamicDatePickerProps
 > = (
   {
-    type = TYPEDATE,
+    type = TYPE_DATE,
     defaultDate,
     minDate,
     maxDate,
     onConfirm: onConfirmProp,
     popupProps,
-    title = "选择日期",
+    title = DEFAULT_TITLE,
   },
   ref
 ) => {
@@ -55,7 +39,7 @@ const DynamicDatePicker: ForwardRefRenderFunction<
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
 
   // 是否为 年月 类型
-  const isYearMonthType = type === TYPEYEARMONTH;
+  const isYearMonthType = type === TYPE_YEAR_MONTH;
 
   // 打开弹窗
   const handleOpenPopup = useCallback(() => {
@@ -122,9 +106,9 @@ const DynamicDatePicker: ForwardRefRenderFunction<
       {...popupProps}
       visible={visible}
       position="bottom"
+      style={{ height: "46%" }}
       round={false}
       className={styles["popup-content"]}
-      style={{ height: "46%" }}
       onOverlayClick={setFalse}
       destroyOnClose
     >
