@@ -11,7 +11,7 @@ export interface DynamicDatePickerProps {
   maxDate?: string; // 限制最大日期
   title?: string; // 弹窗标题
   onConfirm: (options: YearMonth | YearMonthDay) => void; // 确认选择回调
-  popupProps?: PopupProps; // 支持对 popup 的自定义
+  popupProps?: Partial<PopupProps>; // 支持对 popup 的自定义
 }
 
 export interface CustomPickerRef {

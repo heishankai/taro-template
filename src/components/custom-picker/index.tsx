@@ -11,7 +11,12 @@ import { Popup } from "@nutui/nutui-react-taro";
 import styles from "./index.module.scss";
 import type { DynamicDatePickerProps, CustomPickerRef } from "./types";
 // constants
-import { TYPE_DATE, TYPE_YEAR_MONTH, DEFAULT_TITLE } from "./constants";
+import {
+  TYPE_DATE,
+  TYPE_YEAR_MONTH,
+  DEFAULT_TITLE,
+  DEFAULT_HEIGHT,
+} from "./constants";
 // utils
 import { dateLimit, scrollLimit } from "./utils";
 // components
@@ -103,14 +108,14 @@ const DynamicDatePicker: ForwardRefRenderFunction<
 
   return (
     <Popup
-      {...popupProps}
       visible={visible}
       position="bottom"
-      style={{ height: "46%" }}
+      style={{ height: DEFAULT_HEIGHT }}
       round={false}
       className={styles["popup-content"]}
       onOverlayClick={setFalse}
       destroyOnClose
+      {...popupProps}
     >
       <PopupTitle setFalse={setFalse} onConfirm={handleConfirm} title={title} />
 

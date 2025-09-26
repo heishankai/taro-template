@@ -24,7 +24,9 @@ export default function Index() {
         minDate="2023-09-13"
         maxDate="2025-11-14"
         defaultDate="2025-10-14"
-        // popupProps={{ style: { height: "46%" } }}
+        // popupProps={{
+        //   style: { height: "20%" },
+        // }}
       />
     </View>
   );
