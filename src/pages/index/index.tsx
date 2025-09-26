@@ -1,10 +1,10 @@
 import { View } from "@tarojs/components";
 import { useRef } from "react";
 import { Cell } from "@nutui/nutui-react-taro";
-import CustomPicker from "../../components/custom-picker";
+import { useCustomPickerRef } from "../../components/custom-picker";
 
 export default function Index() {
-  const customPickerRef = useRef<any>(null);
+  const { customPickerRef, CustomPicker } = useCustomPickerRef();
 
   return (
     <View className="index">

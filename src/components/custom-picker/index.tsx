@@ -4,6 +4,9 @@ import {
   ForwardRefRenderFunction,
   useState,
   useCallback,
+  memo,
+  useRef,
+  useMemo,
 } from "react";
 import { useBoolean } from "ahooks";
 import { View, PickerView, PickerViewColumn } from "@tarojs/components";
@@ -42,6 +45,8 @@ const DynamicDatePicker: ForwardRefRenderFunction<
   const [months, setMonths] = useState<number[]>([]);
   const [days, setDays] = useState<number[]>([]);
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
+
+  const memoPopupProps = useMemo(() => popupProps || {}, [popupProps]);
 
   // 是否为 年月 类型
   const isYearMonthType = type === TYPE_YEAR_MONTH;
@@ -115,7 +120,7 @@ const DynamicDatePicker: ForwardRefRenderFunction<
       className={styles["popup-content"]}
       onOverlayClick={setFalse}
       destroyOnClose
-      {...popupProps}
+      {...memoPopupProps}
     >
       {/* 标题 */}
       <PopupTitle setFalse={setFalse} onConfirm={handleConfirm} title={title} />
@@ -159,6 +164,11 @@ const DynamicDatePicker: ForwardRefRenderFunction<
   );
 };
 
-export default forwardRef<CustomPickerRef, DynamicDatePickerProps>(
-  DynamicDatePicker
-);
+// 只在模块加载时创建一次，避免重复渲染
+const MemoDynamicDatePicker = memo(forwardRef(DynamicDatePicker));
+
+// 导出 hook
+export const useCustomPickerRef = () => {
+  const customPickerRef = useRef<CustomPickerRef>(null);
+  return { customPickerRef, CustomPicker: MemoDynamicDatePicker };
+};
