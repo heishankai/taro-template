@@ -20,10 +20,10 @@ export default function Index() {
         onConfirm={(options) => {
           console.log(options, "options");
         }}
-        type="year-month"
+        // type="year-month"
         // minDate="2025-09-13"
         // maxDate="2025-09-14"
-        defaultDate="2025-09-14"
+        defaultDate="2025-10-14"
       />
     </View>
   );

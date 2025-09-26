@@ -3,21 +3,29 @@ import {
   useImperativeHandle,
   ForwardRefRenderFunction,
   useState,
+  useCallback,
 } from "react";
 import { useBoolean } from "ahooks";
 import { View, PickerView, PickerViewColumn } from "@tarojs/components";
 import { Popup } from "@nutui/nutui-react-taro";
+import type { PopupProps } from "@nutui/nutui-react-taro";
 import styles from "./index.module.scss";
+// utils
 import { dateLimit, scrollLimit } from "./utils";
+// components
 import PopupTitle from "./components/PopupTitle";
 
-/* eslint-disable react/no-unused-prop-types */
+const TYPEDATE = "date"; // YYYY-MM-DD
+const TYPEYEARMONTH = "year-month"; // YYYY-MM
+
 interface DynamicDatePickerProps {
-  type?: "date" | "year-month";
-  defaultDate?: string;
-  minDate?: string;
-  maxDate?: string;
-  onConfirm: (options: number[]) => void;
+  type?: typeof TYPEDATE | typeof TYPEYEARMONTH; // 选择类型，默认 date
+  defaultDate?: string; // 默认日期
+  minDate?: string; // 限制最小日期
+  maxDate?: string; // 限制最大日期
+  title?: string; // 弹窗标题
+  onConfirm: (options: number[]) => void; // 确认选择回调
+  popupProps?: PopupProps; // 支持对 popup 的自定义
 }
 
 export interface CustomPickerRef {
@@ -28,91 +36,113 @@ export interface CustomPickerRef {
 const DynamicDatePicker: ForwardRefRenderFunction<
   CustomPickerRef,
   DynamicDatePickerProps
-> = (props, ref) => {
-  const type = props?.type || "date";
+> = (
+  {
+    type = TYPEDATE,
+    defaultDate,
+    minDate,
+    maxDate,
+    onConfirm: onConfirmProp,
+    popupProps,
+    title = "选择日期",
+  },
+  ref
+) => {
   const [visible, { setTrue, setFalse }] = useBoolean(false);
   const [years, setYears] = useState<number[]>([]);
   const [months, setMonths] = useState<number[]>([]);
   const [days, setDays] = useState<number[]>([]);
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
 
-  console.log(props, "propspropsprops");
+  // 是否为 年月 类型
+  const isYearMonthType = type === TYPEYEARMONTH;
 
-  const handleOpenPopup = () => {
+  // 打开弹窗
+  const handleOpenPopup = useCallback(() => {
     setTrue();
     const { yearList, monthList, dayList, yearIdx, monthIdx, dayIdx } =
-      dateLimit(props, type);
+      dateLimit({ defaultDate, minDate, maxDate }, type);
 
     setYears(yearList);
     setMonths(monthList);
     setDays(dayList);
 
-    console.log(yearList, "yearList");
-    console.log(monthList, "monthList");
-    console.log(dayList, "dayList");
-
-    setSelected(
-      type === "year-month" ? [yearIdx, monthIdx] : [yearIdx, monthIdx, dayIdx]
+    setSelectedIndexes(
+      isYearMonthType ? [yearIdx, monthIdx] : [yearIdx, monthIdx, dayIdx]
     );
-  };
+  }, [defaultDate, minDate, maxDate, type, isYearMonthType, setTrue]);
 
-  const onConfirm = () => {
-    const [yIdx, mIdx, dIdx] = selected;
+  // 确认选择 - 回调
+  const handleConfirm = useCallback(() => {
+    const [yIdx, mIdx, dIdx] = selectedIndexes;
 
-    if (type === "year-month") {
-      props?.onConfirm?.([years[yIdx], months[mIdx]]);
+    if (isYearMonthType) {
+      onConfirmProp?.([years[yIdx], months[mIdx]]);
     } else {
-      props?.onConfirm?.([years[yIdx], months[mIdx], days[dIdx]]);
+      onConfirmProp?.([years[yIdx], months[mIdx], days[dIdx]]);
     }
 
     setFalse();
-  };
+  }, [
+    selectedIndexes,
+    years,
+    months,
+    days,
+    isYearMonthType,
+    onConfirmProp,
+    setFalse,
+  ]);
 
-  const handleChange = (e: any) => {
-    const values = e?.detail?.value;
-    const { yIdx, mIdx, dIdx, monthList, dayList } = scrollLimit(
-      values,
-      props,
-      years,
-      setYears,
-      type
-    );
+  // 滑动选择
+  const handleChange = useCallback(
+    (e: any) => {
+      const values = e?.detail?.value;
+      const { yIdx, mIdx, dIdx, monthList, dayList } = scrollLimit(
+        values,
+        { defaultDate, minDate, maxDate },
+        years,
+        setYears,
+        type
+      );
 
-    setMonths(monthList);
-    if (type !== "year-month") setDays(dayList);
-    setSelected(type === "year-month" ? [yIdx, mIdx] : [yIdx, mIdx, dIdx]);
-  };
+      setMonths(monthList);
+      if (!isYearMonthType) setDays(dayList);
+      setSelectedIndexes(isYearMonthType ? [yIdx, mIdx] : [yIdx, mIdx, dIdx]);
+    },
+    [years, defaultDate, minDate, maxDate, type, isYearMonthType]
+  );
 
-  useImperativeHandle(ref, () => ({ handleOpenPopup, onConfirm }));
+  useImperativeHandle(ref, () => ({
+    handleOpenPopup,
+    onConfirm: handleConfirm,
+  }));
 
   return (
     <Popup
+      {...popupProps}
       visible={visible}
       position="bottom"
       round={false}
       className={styles["popup-content"]}
       style={{ height: "46%" }}
-      onOverlayClick={() => setFalse()}
+      onOverlayClick={setFalse}
       destroyOnClose
     >
-      <PopupTitle setFalse={setFalse} onConfirm={onConfirm} />
+      <PopupTitle setFalse={setFalse} onConfirm={handleConfirm} title={title} />
 
       <PickerView
-        value={selected}
+        value={selectedIndexes}
         onChange={handleChange}
         style={{ flex: 1 }}
+        indicatorClass={styles["indicator-class"]}
       >
         {/* 年 */}
         <PickerViewColumn>
-          {years.map((y) => {
-            console.log(y, "y");
-
-            return (
-              <View key={y} className={styles["selected-text"]}>
-                {y}年
-              </View>
-            );
-          })}
+          {years.map((y) => (
+            <View key={y} className={styles["selected-text"]}>
+              {y}年
+            </View>
+          ))}
         </PickerViewColumn>
 
         {/* 月 */}
@@ -125,7 +155,7 @@ const DynamicDatePicker: ForwardRefRenderFunction<
         </PickerViewColumn>
 
         {/* 日 */}
-        {type !== "year-month" && (
+        {!isYearMonthType && (
           <PickerViewColumn>
             {days.map((d) => (
               <View key={d} className={styles["selected-text"]}>
